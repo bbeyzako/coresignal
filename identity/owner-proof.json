@@ -1,0 +1,20 @@
+{
+  "schema": "coresignal-owner-proof-v1",
+  "did": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+  "publicKeyJwk": {
+    "crv": "Ed25519",
+    "x": "e8g-ipB3eS4hbNEHYDNXmzVbDsxNDHsf3WxrS4J7fI8",
+    "kty": "OKP"
+  },
+  "claim": {
+    "schema": "coresignal-owner-claim-v1",
+    "project": "CoreSignal",
+    "repository": "https://github.com/bbeyzako/coresignal",
+    "did": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+    "statement": "I control this DID and use it as the public identity of CoreSignal.",
+    "createdOn": "2026-08-26"
+  },
+  "sha256": "3d684bfcc1cb50311e9d0e2abc4f12006da07e4cebc33f2a86b67b0c814d20cd",
+  "signature": "noW12D2kIy5c4k5lD490inaPUfUvt7b5MbD0-PoP-YL0BNn-CdSc32ma-FJCE6t9MfnjmbI4jF0jNUC8oifVDQ",
+  "signedAt": "2026-08-26T19:13:03.268Z"
+}

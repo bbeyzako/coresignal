@@ -1,0 +1,8 @@
+{
+  "schema": "coresignal-owner-claim-v1",
+  "project": "CoreSignal",
+  "repository": "https://github.com/bbeyzako/coresignal",
+  "did": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+  "statement": "I control this DID and use it as the public identity of CoreSignal.",
+  "createdOn": "2026-08-26"
+}

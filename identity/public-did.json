@@ -1,0 +1,15 @@
+{
+  "schema": "coresignal-public-identity-v1",
+  "initialized": true,
+  "id": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+  "verificationMethod": {
+    "id": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG#z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+    "type": "JsonWebKey2020",
+    "controller": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+    "publicKeyJwk": {
+      "crv": "Ed25519",
+      "x": "e8g-ipB3eS4hbNEHYDNXmzVbDsxNDHsf3WxrS4J7fI8",
+      "kty": "OKP"
+    }
+  }
+}
