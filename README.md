@@ -1,103 +1,182 @@
-# CoreSignal
+<div align="center">
+  <img src="public/favicon.svg" alt="CoreSignal logo" width="76" height="76" />
+  <h1>CoreSignal</h1>
+  <p><strong>Signal intelligence and verifiable DID reports for public Technocore rooms.</strong></p>
+  <p>CoreSignal turns fast-moving public room activity into an inspectable priority feed, structured metrics, and tamper-evident report receipts.</p>
+  <p>
+    <a href="https://coresignal-six.vercel.app/">Live App</a> ·
+    <a href="https://coresignal-six.vercel.app/api/digest?room=technocore&amp;limit=200">API</a> ·
+    <a href="proofs/technocore-launch.signed.json">Signed Launch Proof</a> ·
+    <a href="identity/public-did.json">Public Identity</a>
+  </p>
+  <p>
+    <a href="https://coresignal-six.vercel.app/"><img src="https://img.shields.io/badge/status-live-cfff63?style=flat-square&amp;labelColor=111713" alt="Live status" /></a>
+    <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&amp;logo=nextdotjs" alt="Next.js 16" /></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&amp;logo=typescript&amp;logoColor=white" alt="TypeScript 5" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" /></a>
+  </p>
+</div>
 
-CoreSignal turns noisy public Technocore rooms into an inspectable signal feed. It detects operational topics, extracts high-signal messages, produces a deterministic report receipt, and lets the project owner sign exported reports locally with one `did:key` identity.
+---
 
-## Why it exists
+## Overview
 
-Public agent rooms are easy to read but difficult to monitor. CoreSignal gives builders a focused view of testnet, faucet, inference, miner, validator, DID, release, and project activity without treating room messages as trusted instructions.
+Public agent rooms are useful, but their speed and noise make operational updates easy to miss. CoreSignal reads a selected public [Technocore](https://technocore.chat/) room and produces a focused view of activity related to validators, miners, inference, testnets, faucets, releases, projects, DIDs, and other high-signal topics.
+
+Each result includes a deterministic SHA-256 receipt. Exported receipts can be signed locally with CoreSignal's Ed25519 `did:key`, making the report's origin and integrity independently verifiable without exposing private key material to the browser, repository, or Vercel.
+
+## How it works
+
+```mermaid
+flowchart TD
+  A["Public Technocore room"] --> B["CoreSignal API"]
+  B --> C["Signal extraction"]
+  C --> D["Dashboard + JSON receipt"]
+  D --> E["Local Ed25519 signature"]
+```
+
+1. The server fetches a bounded window from a public Technocore room.
+2. Messages are normalized and classified using transparent operational rules.
+3. CoreSignal calculates room metrics, topics, high-signal messages, and a compact digest.
+4. A canonical receipt payload is hashed with SHA-256.
+5. The exported receipt can be signed locally and verified against the project's public DID.
 
 ## Features
 
-- Read any public Technocore room
-- Count messages, writers, links, and DID-backed senders
-- Surface high-signal operational messages
-- Generate a SHA-256 receipt for each report
-- Export reports as JSON
-- Sign and verify reports locally with Ed25519
-- Keep seed and private-key material off the website and Vercel
+| Capability | What it provides |
+| --- | --- |
+| Public room scanner | Reads supported public Technocore rooms by name |
+| Priority signal feed | Surfaces messages containing operational categories or links |
+| Topic extraction | Ranks known categories and repeated room keywords |
+| Identity visibility | Counts messages that expose a DID-backed sender identity |
+| Deterministic receipt | Produces a canonical payload and SHA-256 digest |
+| JSON export | Downloads the complete room report for inspection or archiving |
+| Local proof tools | Signs and verifies report receipts with Ed25519 |
+| Secret-free deployment | Keeps seed and private-key material off GitHub and Vercel |
 
-## Public identity
+## Live demo and API
 
-CoreSignal uses one project-specific DID. It is intentionally uninitialized in the source package so the project owner can generate it locally. After initialization, the public identity document is stored at [`identity/public-did.json`](identity/public-did.json). The seed and private JWK `d` value are never included in the repository.
+Open the [CoreSignal dashboard](https://coresignal-six.vercel.app/) or request a digest directly:
+
+```http
+GET /api/digest?room=technocore&limit=200
+```
+
+### Query parameters
+
+| Parameter | Default | Rules |
+| --- | ---: | --- |
+| `room` | `technocore` | 1–48 lowercase letters, numbers, hyphens, or underscores |
+| `limit` | `200` | Clamped to the range `20–500` |
+
+The response contains the generated digest, message and writer counts, DID visibility, detected topics, priority signals, sequence range, and the receipt's SHA-256 hash.
+
+> CoreSignal reads public data and applies deterministic heuristics. It does not execute room content or treat messages as trusted instructions.
+
+## Verified project identity
+
+CoreSignal uses one project-specific Ed25519 identity:
+
+```text
+did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG
+```
+
+| Artifact | Purpose |
+| --- | --- |
+| [`identity/public-did.json`](identity/public-did.json) | Public DID and verification method |
+| [`identity/owner-proof.json`](identity/owner-proof.json) | Signed proof of control over the project identity |
+| [`proofs/technocore-launch.signed.json`](proofs/technocore-launch.signed.json) | Signed launch report from the live Technocore room |
+
+Verified launch proof SHA-256:
+
+```text
+73f8ceb3ad193aae6180e9ffa8063191355b1b21d6231eeafcfab3bec09d1967
+```
+
+A valid signature proves that the CoreSignal key signed the exact payload and that the payload has not changed since signing. It does **not** prove that statements inside a room are accurate, safe, or trustworthy.
+
+## Technology
+
+| Layer | Implementation |
+| --- | --- |
+| Web application | Next.js App Router, React, TypeScript |
+| Interface | Tailwind CSS, Radix UI, Lucide icons |
+| Data route | Next.js Route Handler / Vercel Function |
+| Receipt integrity | Web Crypto SHA-256 |
+| Proof signing | Node.js Crypto, Ed25519, `did:key` |
+| Deployment | Vercel |
 
 ## Local development
 
-Requirements: Node.js 20.9 or newer.
+Requirements: Node.js `20.9` or newer and npm.
 
 ```bash
+git clone https://github.com/bbeyzako/coresignal.git
+cd coresignal
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-Validate a production build:
+Open [http://localhost:3000](http://localhost:3000). To validate a production build:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## Create the CoreSignal DID on Windows PowerShell
+No environment variable is required to run or deploy the dashboard.
 
-Generate the identity once, outside this repository:
+## Sign and verify a report
 
-```powershell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\CoreSignal-Private"
-npm run identity:create -- "$env:USERPROFILE\CoreSignal-Private\identity.json"
-```
+The public application can export a CoreSignal report as JSON. Signing happens only on the machine that holds the private identity file.
 
-The command prints the new public DID, saves its private key outside the project, and updates only `identity/public-did.json` and `identity/owner-claim.json` inside the project.
-
-## Create the owner proof
+### Windows PowerShell
 
 ```powershell
 $env:CORESIGNAL_KEY_FILE="$env:USERPROFILE\CoreSignal-Private\identity.json"
-npm run sign:owner
-npm run verify:owner
+npm run sign:report -- ".\coresignal-technocore.json"
+npm run verify:report -- ".\coresignal-technocore.signed.json"
 Remove-Item Env:CORESIGNAL_KEY_FILE
 ```
 
-This creates `identity/owner-proof.json`. It contains the public key, claim, hash, and signature—never the private key. Commit the generated proof to GitHub.
+### macOS or Linux
 
-## Sign an exported CoreSignal report
-
-```powershell
-$env:CORESIGNAL_KEY_FILE="C:\absolute\private\path\identity.json"
-npm run sign:report -- "C:\path\to\coresignal-technocore.json"
-npm run verify:report -- "C:\path\to\coresignal-technocore.signed.json"
-Remove-Item Env:CORESIGNAL_KEY_FILE
+```bash
+CORESIGNAL_KEY_FILE="$HOME/CoreSignal-Private/identity.json" \
+  npm run sign:report -- ./coresignal-technocore.json
+npm run verify:report -- ./coresignal-technocore.signed.json
 ```
 
-## Publish to GitHub
+For a fork that needs a new identity, use `npm run identity:create -- <private-output-path>`. Never create the private identity file inside the repository and never commit a seed or private JWK `d` value.
 
-Create an empty public repository named `coresignal` under `bbeyzako`, open this folder in VS Code, and run:
+## Security model
 
-```powershell
-git init
-git add .
-git commit -m "Launch CoreSignal MVP"
-git branch -M main
-git remote add origin https://github.com/bbeyzako/coresignal.git
-git push -u origin main
+- The dashboard and API use only public room data and the public CoreSignal DID.
+- The private Ed25519 key remains in a local file controlled by the project owner.
+- GitHub stores only public identity documents, signed proofs, hashes, and signatures.
+- Vercel does not need the seed, private key, or a signing environment variable.
+- Upstream content is displayed as untrusted data and is never executed.
+- Report verification checks the schema, DID-to-public-key relationship, payload hash, and Ed25519 signature.
+
+Please report security issues according to [`SECURITY.md`](SECURITY.md).
+
+## Roadmap
+
+- Improve room-specific ranking rules and reduce low-value matches.
+- Add signed report history and human-readable proof pages.
+- Show changes between sequential room snapshots.
+- Add optional alerts for selected topics and rooms.
+- Explore an optional inference layer while keeping receipt generation deterministic and auditable.
+
+## Contributing
+
+Issues and focused pull requests are welcome. Please keep changes small, explain their effect on signal quality or verification, and run the following before opening a pull request:
+
+```bash
+npm run lint
+npm run build
 ```
-
-Before `git add .`, confirm that the local key file is outside the project and run `git status`.
-
-## Deploy on Vercel
-
-1. In Vercel, choose **Add New → Project**.
-2. Import `bbeyzako/coresignal`.
-3. Keep Framework Preset as **Next.js** and Root Directory as `./`.
-4. No environment variable is required for the MVP.
-5. Deploy.
-
-Each later push to `main` will create a new production deployment through the Vercel Git integration.
-
-## Trust model
-
-A valid DID signature proves that the same CoreSignal key signed a specific payload and that the payload was not modified afterward. It does not prove that a Technocore message is true or trustworthy.
 
 ## License
 
-MIT
+CoreSignal is available under the [MIT License](LICENSE).
