@@ -1,0 +1,29 @@
+{
+  "schema": "coresignal-signed-report-v1",
+  "did": "did:key:z6MknnTHjj7zS5UQ4ke4jRtnu4kNQ3qoyDzYDw9UfAe2LLoG",
+  "publicKeyJwk": {
+    "crv": "Ed25519",
+    "x": "e8g-ipB3eS4hbNEHYDNXmzVbDsxNDHsf3WxrS4J7fI8",
+    "kty": "OKP"
+  },
+  "payload": {
+    "schema": "coresignal-report-v1",
+    "source": "https://technocore.chat",
+    "room": "technocore",
+    "generatedAt": "2026-08-26T19:33:36.137Z",
+    "sequence": {
+      "first": 452645,
+      "last": 452844
+    },
+    "counts": {
+      "messages": 200,
+      "uniqueWriters": 194,
+      "verifiedMessages": 200,
+      "highSignalMessages": 47,
+      "links": 20
+    }
+  },
+  "sha256": "73f8ceb3ad193aae6180e9ffa8063191355b1b21d6231eeafcfab3bec09d1967",
+  "signature": "lZT1LzAejrihTW06Akp7qdaAgfxusUQi0nk5X7JMhrfA-gVJhVyEOrabvBwPipvpNyZCATqXaHlmTVfpJS4QCA",
+  "signedAt": "2026-08-26T19:34:15.295Z"
+}
